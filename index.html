@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Bank Account App</title>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+  <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-4">Bank Account Application</h1>
+    <div id="account-section">
+      <div class="mb-4">
+        <input id="account-name" type="text" class="w-full p-2 border rounded" placeholder="Enter your name" />
+      </div>
+      <button id="create-account" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Create Account</button>
+    </div>
+
+    <div id="bank-section" class="hidden">
+      <h2 class="text-lg font-bold text-center">Welcome, <span id="user-name"></span>!</h2>
+      <p class="text-center text-gray-600 mb-4">Current Balance: $<span id="balance">0</span></p>
+
+      <div class="mb-4">
+        <input id="transaction-amount" type="number" class="w-full p-2 border rounded" placeholder="Enter amount" />
+      </div>
+      <div class="flex justify-between gap-2">
+        <button id="deposit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Deposit</button>
+        <button id="withdraw" class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600">Withdraw</button>
+      </div>
+
+      <h3 class="text-lg font-bold mt-6">Transaction History</h3>
+      <ul id="transaction-history" class="mt-2 text-sm text-gray-700"></ul>
+    </div>
+  </div>
+
+  <script>
+     // Variables
+const accountSection = document.getElementById('account-section');
+const bankSection = document.getElementById('bank-section');
+const accountNameInput = document.getElementById('account-name');
+const createAccountButton = document.getElementById('create-account');
+const userNameDisplay = document.getElementById('user-name');
+const balanceDisplay = document.getElementById('balance');
+const transactionAmountInput = document.getElementById('transaction-amount');
+const depositButton = document.getElementById('deposit');
+const withdrawButton = document.getElementById('withdraw');
+const transactionHistory = document.getElementById('transaction-history');
+
+// Initial State
+let account = {
+  name: '',
+  balance: 0,
+  transactions: []
+};
+
+// Create Account
+createAccountButton.addEventListener('click', () => {
+  const name = accountNameInput.value.trim();
+  if (name === '') {
+    alert('Please enter your name to create an account!');
+    return;
+  }
+
+  account.name = name;
+  account.balance = 0;
+  account.transactions = [];
+
+  // Update UI
+  accountSection.classList.add('hidden');
+  bankSection.classList.remove('hidden');
+  userNameDisplay.textContent = name;
+  balanceDisplay.textContent = account.balance;
+  transactionHistory.innerHTML = '';
+});
+
+// Deposit Money
+depositButton.addEventListener('click', () => {
+  const amount = parseFloat(transactionAmountInput.value);
+  if (isNaN(amount) || amount <= 0) {
+    alert('Please enter a valid deposit amount!');
+    return;
+  }
+
+  account.balance += amount;
+  account.transactions.push(`Deposited $${amount}`);
+  updateUI();
+});
+
+// Withdraw Money
+withdrawButton.addEventListener('click', () => {
+  const amount = parseFloat(transactionAmountInput.value);
+  if (isNaN(amount) || amount <= 0) {
+    alert('Please enter a valid withdrawal amount!');
+    return;
+  }
+
+  if (amount > account.balance) {
+    alert('Insufficient funds!');
+    return;
+  }
+
+  account.balance -= amount;
+  account.transactions.push(`Withdrew $${amount}`);
+  updateUI();
+});
+
+// Update UI
+function updateUI() {
+  balanceDisplay.textContent = account.balance;
+  transactionAmountInput.value = '';
+  transactionHistory.innerHTML = account.transactions
+    .map(transaction => `<li>${transaction}</li>`)
+    .join('');
+}
+
+
+  </script>
+</body>
+</html>
